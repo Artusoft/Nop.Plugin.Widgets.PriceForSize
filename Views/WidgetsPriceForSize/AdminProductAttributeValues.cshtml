@@ -1,0 +1,71 @@
+﻿@model List<Nop.Plugin.Widgets.PriceForSize.Domain.AttributeValueEditModel>
+@{
+  Layout = "";
+}
+@using Nop.Web.Framework.UI
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "attributesPriceForSizeAdminForm" }))
+{
+  <table class="adminContent">
+    <tr>
+      <th class="adminTitle">Attribute</th>
+      <th class="adminTitle">Value</th>
+      <th class="adminTitle">Price for perimeter</th>
+      <th class="adminTitle">Price for area</th>
+      <th class="adminTitle">Price for volume</th>
+    </tr>
+    @for (int i = 0; i < Model.Count; i++)
+    {
+      @Html.Hidden("prices[" + @i + "].ProductAttributeValueId", Model[i].ProductAttributeValueId, new { @readonly = "readonly" })
+      <tr>
+        <td class="adminData">
+          @Html.Label("prices[" + @i + "].AttributeName", Model[i].AttributeName, new { @readonly = "readonly" })
+        </td>
+        <td class="adminData">
+          @Html.Label("prices[" + @i + "].ValueName", Model[i].ValueName, new { @readonly = "readonly" })
+        </td>
+        <td class="adminData">
+          @Html.TextBox("prices[" + @i + "].PriceForM1", Model[i].PriceForM1)
+        </td>
+        <td class="adminData">
+          @Html.TextBox("prices[" + @i + "].PriceForM2", Model[i].PriceForM2)
+        </td>
+        <td class="adminData">
+          @Html.TextBox("prices[" + @i + "].PriceForM3", Model[i].PriceForM3)
+        </td>
+      </tr>
+    }
+    <tr>
+      <td>
+        <input id="attributesPriceForSizeAdminFormSave" type="button" value="Save" class="k-button" />
+      </td>
+      <td>
+        <div class="saveResult"></div>
+      </td>
+    </tr>
+  </table>
+}
+
+<script>
+    $().ready(function () {
+      jQuery('#attributesPriceForSizeAdminForm').validate().currentForm = '';
+
+      $('#attributesPriceForSizeAdminFormSave').click(function (ev) {
+        $form = $('#attributesPriceForSizeAdminForm');
+        $.ajax({
+          cache: false,
+          type: "POST",
+          url: $form.attr('action'),
+          data: $form.serialize(),
+          datatype: "html",
+          success: function (data) {
+            $('#attributesPriceForSizeAdminForm .saveResult').html(data);
+          },
+          error: function (a, b, c) {
+            alert(c);
+          }
+        });
+      });
+    });
+</script>

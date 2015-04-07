@@ -1,0 +1,115 @@
+﻿@model Nop.Plugin.Widgets.PriceForSize.Domain.Product_PriceForSize
+@{
+    Layout = "";
+}
+@using Nop.Web.Framework
+@using Nop.Web.Framework.UI
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "priceForSizeAdminForm" }))
+{ 
+  @Html.HiddenFor(model => model.ProductId)
+  <table class="adminContent">
+    <tr>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.HasPriceForSize):
+      </td>
+      <td class="adminData">
+        @Html.CheckBoxFor(model => model.HasPriceForSize)
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.WidthAttributeId):
+      </td>
+      <td class="adminData">
+        @Html.DropDownListFor(model => model.WidthAttributeId, ViewData["attributes"] as SelectList, "--Unmanaged--")
+      </td>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.MinimumWidthManageable):
+      </td>
+      <td class="adminData">
+        @Html.TextBoxFor(model => model.MinimumWidthManageable)
+      </td>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.MaximumWidthManageable):
+      </td>
+      <td class="adminData">
+        @Html.TextBoxFor(model => model.MaximumWidthManageable)
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.HeightAttributeId):
+      </td>
+      <td class="adminData">
+        @Html.DropDownListFor(model => model.HeightAttributeId, ViewData["attributes"] as SelectList, "--Unmanaged--")
+      </td>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.MinimumHeightManageable):
+      </td>
+      <td class="adminData">
+        @Html.TextBoxFor(model => model.MinimumHeightManageable)
+      </td>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.MaximumHeightManageable):
+      </td>
+      <td class="adminData">
+        @Html.TextBoxFor(model => model.MaximumHeightManageable)
+      </td>
+    </tr>
+    <tr>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.DepthAttributeId):
+      </td>
+      <td class="adminData">
+        @Html.DropDownListFor(model => model.DepthAttributeId, ViewData["attributes"] as SelectList, "--Unmanaged--")
+      </td>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.MinimumDepthManageable):
+      </td>
+      <td class="adminData">
+        @Html.TextBoxFor(model => model.MinimumDepthManageable)
+      </td>
+      <td class="adminTitle">
+        @Html.NopLabelFor(model => model.MaximumDepthManageable):
+      </td>
+      <td class="adminData">
+        @Html.TextBoxFor(model => model.MaximumDepthManageable)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input id="priceForSizeAdminFormSave" type="button" value="Save" class="k-button" />
+      </td>
+      <td>
+        <div class="saveResult"></div>
+      </td>
+      </tr>
+</table>
+}
+  <script>
+    $().ready(function () {
+      jQuery('#priceForSizeAdminForm').validate().currentForm = '';
+
+      $('#priceForSizeAdminFormSave').click(function (ev) {
+        $form = $('#priceForSizeAdminForm');
+        $.ajax({
+          cache: false,
+          type: "POST",
+          url: $form.attr('action'),
+          data: $form.serialize(),
+          datatype: "html",
+          success: function (data) {
+            $('#priceForSizeAdminForm .saveResult').html(data);
+          },
+          error: function (a, b, c) {
+            alert(c);
+          }
+        });
+      });
+    });
+  </script>
+
+<div style="border:1px solid">
+  @Html.Action("AdminProductAttributeValues", new { id = Model.ProductId })
+</div>

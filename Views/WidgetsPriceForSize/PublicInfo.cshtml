@@ -1,0 +1,85 @@
+﻿@model Nop.Plugin.Widgets.PriceForSize.Domain.Product_PriceForSize
+@using Nop.Services.Catalog
+@using Nop.Core.Domain.Catalog
+@using Nop.Web.Framework.UI
+@{
+    Layout = "";
+    String priceAdjustmentFuncName = string.Format("adjustPrice_{0}", Model.ProductId);
+    IProductAttributeService productAttributeService = Nop.Core.Infrastructure.EngineContext.Current.Resolve<IProductAttributeService>();
+
+    var attributes = productAttributeService.GetProductAttributeMappingsByProductId(Model.ProductId);
+    String withBox="";
+    String heightBox = "";
+    String depthBox = "";
+    
+    foreach (var attribute in attributes)
+    {
+      if (attribute.ProductAttributeId == Model.WidthAttributeId)
+      { 
+        withBox = string.Format("product_attribute_{0}_{1}_{2}", attribute.ProductId, attribute.ProductAttributeId, attribute.Id);
+      }
+      if (attribute.ProductAttributeId == Model.HeightAttributeId)
+      {
+        heightBox = string.Format("product_attribute_{0}_{1}_{2}", attribute.ProductId, attribute.ProductAttributeId, attribute.Id);
+      }
+      if (attribute.ProductAttributeId == Model.DepthAttributeId)
+      {
+        depthBox = string.Format("product_attribute_{0}_{1}_{2}", attribute.ProductId, attribute.ProductAttributeId, attribute.Id);
+      }
+    }
+    }
+
+@if (Model.HasPriceForSize)
+{ 
+<script>
+  $().ready(function () {
+    @if(!String.IsNullOrEmpty( withBox))
+    {
+    <text>
+    setInput('#@withBox', @(Model.MinimumWidthManageable.ToString() ?? "null"), @Model.MaximumWidthManageable);
+    </text>
+    }
+    @if(!String.IsNullOrEmpty(heightBox))
+    {
+    <text>
+    setInput('#@heightBox', @(Model.MinimumHeightManageable.HasValue ? Model.MinimumHeightManageable.Value.ToString() : "null"), @(Model.MaximumHeightManageable.HasValue ? Model.MaximumHeightManageable.Value.ToString() : "null"));
+    </text>
+    }
+    @if (!String.IsNullOrEmpty(depthBox))
+    {
+    <text>
+    setInput('#@depthBox',  @(Model.MinimumDepthManageable.ToString() ?? "null"), @Model.MaximumDepthManageable);
+    </text>
+    }
+  });
+
+  function setInput(elementId, minValue, maxValue) {
+    var ph="";
+    if (minValue)
+      ph+='min: ' + minValue + '  ';
+    if (maxValue)
+      ph+='max: ' + maxValue + '  ';
+
+    $(elementId).attr('type', 'number')
+      .attr('step', '1')
+      .attr('min', minValue)
+      .attr('max', maxValue)
+      .attr('placeholder', ph)
+      .change(OnTextMChanged);
+  }
+
+  function OnTextMChanged() { 
+    var min = parseInt($(this).attr('min'));
+    var max = parseInt($(this).attr('max'));
+    
+    if(min && parseInt($(this).val()) <min){
+      $(this).val(min);
+    }else if(max && parseInt($(this).val())>max){
+      $(this).val(max);
+    }
+
+    @(priceAdjustmentFuncName)();
+  }
+
+</script>
+}

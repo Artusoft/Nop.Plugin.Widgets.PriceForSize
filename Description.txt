@@ -1,0 +1,8 @@
+﻿Group: Widgets
+FriendlyName: Price for size
+SystemName: Widgets.PriceForSize
+Version: 1.0
+SupportedVersions: 3.50
+Author: Artusoft
+DisplayOrder: 1
+FileName: Nop.Plugin.Widgets.PriceForSize.dll
