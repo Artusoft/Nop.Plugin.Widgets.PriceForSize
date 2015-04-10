@@ -21,6 +21,10 @@ namespace Nop.Plugin.Widgets.PriceForSize.Data
       Property(m => m.PriceForM1);
       Property(m => m.PriceForM2);
       Property(m => m.PriceForM3);
+
+      Property(m => m.PriceForBaseLength);
+      Property(m => m.PriceForHeightLength);
+      Property(m => m.PriceForDepthLength);
     }
 
   }

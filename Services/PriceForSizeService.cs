@@ -44,6 +44,10 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
         p.MinimumDepthManageable = ps.MinimumDepthManageable;
         p.MaximumDepthManageable = ps.MaximumDepthManageable;
 
+        p.MinimumBillablePerimeter = ps.MinimumBillablePerimeter;
+        p.MinimumBillableArea = ps.MinimumBillableArea;
+        p.MinimumBillableVolume = ps.MinimumBillableVolume;
+
         _productRepository.Update(p);
       }
       else
@@ -58,6 +62,9 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
         p.PriceForM1 = ps.PriceForM1;
         p.PriceForM2 = ps.PriceForM2;
         p.PriceForM3 = ps.PriceForM3;
+        p.PriceForBaseLength = ps.PriceForBaseLength;
+        p.PriceForHeightLength = ps.PriceForHeightLength;
+        p.PriceForDepthLength = ps.PriceForDepthLength;
 
         _productAttributeValueRepository_ps.Update(p);
       }

@@ -23,5 +23,9 @@ namespace Nop.Plugin.Widgets.PriceForSize.Domain
     public virtual Int32? DepthAttributeId { get; set; }
     public virtual Int32? MinimumDepthManageable { get; set; }
     public virtual Int32? MaximumDepthManageable { get; set; }
+
+    public virtual Decimal? MinimumBillablePerimeter { get; set; }
+    public virtual Decimal? MinimumBillableArea { get; set; }
+    public virtual Decimal? MinimumBillableVolume { get; set; }
   }
 }

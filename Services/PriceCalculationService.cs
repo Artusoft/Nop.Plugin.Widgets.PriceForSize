@@ -77,6 +77,9 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
         Decimal priceM1 = 0;
         Decimal priceM2 = 0;
         Decimal priceM3 = 0;
+        Decimal priceBase = 0;
+        Decimal priceHeight = 0;
+        Decimal priceDepth = 0;
 
         var prices = _priceForSizeService.GetAttributesPrice(product.Id);
         foreach (var m in mappings)
@@ -96,19 +99,34 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
                   priceM1 += price.PriceForM1.GetValueOrDefault();
                   priceM2 += price.PriceForM2.GetValueOrDefault();
                   priceM3 += price.PriceForM3.GetValueOrDefault();
+                  priceBase += price.PriceForBaseLength.GetValueOrDefault();
+                  priceHeight += price.PriceForHeightLength.GetValueOrDefault();
+                  priceDepth += price.PriceForDepthLength.GetValueOrDefault();
                 }
               }
             }
           }
 
-        var area = Convert.ToDecimal(w) / 100 * Convert.ToDecimal(h) / 100;
         var per = Convert.ToDecimal(w + h) * 2 / 100;
+        var area = Convert.ToDecimal(w) / 100 * Convert.ToDecimal(h) / 100;
         var vol = Convert.ToDecimal(w) / 100 * Convert.ToDecimal(h) / 100 * Convert.ToDecimal(d) / 100;
 
+        if (ps.MinimumBillablePerimeter.HasValue && per < ps.MinimumBillablePerimeter.Value)
+          per = ps.MinimumBillablePerimeter.Value;
+
+        if (ps.MinimumBillableArea.HasValue && area < ps.MinimumBillableArea.Value)
+          area = ps.MinimumBillableArea.Value;
+
+        if (ps.MinimumBillableVolume.HasValue && vol < ps.MinimumBillableVolume.Value)
+          vol = ps.MinimumBillableVolume.Value;
+
         return base.GetUnitPrice(product, customer, shoppingCartType, quantity, attributesXml, customerEnteredPrice, rentalStartDate, rentalEndDate, includeDiscounts, out  discountAmount, out appliedDiscount) +
-          area * priceM2 +
           per * priceM1 +
-          vol * priceM3;
+          area * priceM2 +
+          vol * priceM3 +
+          priceBase * w +
+          priceHeight * h +
+          priceDepth * d;
       }
       else
         return base.GetUnitPrice(product, customer, shoppingCartType, quantity, attributesXml, customerEnteredPrice, rentalStartDate, rentalEndDate, includeDiscounts, out discountAmount, out appliedDiscount);

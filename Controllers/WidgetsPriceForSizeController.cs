@@ -100,7 +100,16 @@ namespace Nop.Plugin.Widgets.PriceForSize.Controllers
                                   select _p.PriceForM2).FirstOrDefault(),
                     PriceForM3 = (from _p in prices
                                   where _p.ProductAttributeValueId == v.Id
-                                  select _p.PriceForM3).FirstOrDefault()
+                                  select _p.PriceForM3).FirstOrDefault(),
+                    PriceForBaseLength = (from _p in prices
+                                          where _p.ProductAttributeValueId == v.Id
+                                          select _p.PriceForBaseLength).FirstOrDefault(),
+                    PriceForHeightLength = (from _p in prices
+                                            where _p.ProductAttributeValueId == v.Id
+                                            select _p.PriceForHeightLength).FirstOrDefault(),
+                    PriceForDepthLength = (from _p in prices
+                                           where _p.ProductAttributeValueId == v.Id
+                                           select _p.PriceForDepthLength).FirstOrDefault()
                   };
 
 
@@ -116,7 +125,10 @@ namespace Nop.Plugin.Widgets.PriceForSize.Controllers
           ProductAttributeValueId = p.ProductAttributeValueId,
           PriceForM1 = p.PriceForM1,
           PriceForM2 = p.PriceForM2,
-          PriceForM3 = p.PriceForM3
+          PriceForM3 = p.PriceForM3,
+          PriceForBaseLength = p.PriceForBaseLength,
+          PriceForHeightLength = p.PriceForHeightLength,
+          PriceForDepthLength = p.PriceForDepthLength
         });
 
       return new ContentResult() { Content = "Save completed.", ContentType = "text/html" };

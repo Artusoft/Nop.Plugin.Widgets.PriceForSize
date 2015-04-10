@@ -14,6 +14,9 @@
       <th class="adminTitle">Price for perimeter</th>
       <th class="adminTitle">Price for area</th>
       <th class="adminTitle">Price for volume</th>
+      <th class="adminTitle">Price for base length</th>
+      <th class="adminTitle">Price for height length</th>
+      <th class="adminTitle">Price for depth length</th>
     </tr>
     @for (int i = 0; i < Model.Count; i++)
     {
@@ -33,6 +36,15 @@
         </td>
         <td class="adminData">
           @Html.TextBox("prices[" + @i + "].PriceForM3", Model[i].PriceForM3)
+        </td>
+        <td class="adminData">
+          @Html.TextBox("prices[" + @i + "].PriceForBaseLength", Model[i].PriceForBaseLength)
+        </td>
+        <td class="adminData">
+          @Html.TextBox("prices[" + @i + "].PriceForHeightLength", Model[i].PriceForHeightLength)
+        </td>
+        <td class="adminData">
+          @Html.TextBox("prices[" + @i + "].PriceForDepthLength", Model[i].PriceForDepthLength)
         </td>
       </tr>
     }

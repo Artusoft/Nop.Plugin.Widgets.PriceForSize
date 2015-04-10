@@ -31,6 +31,10 @@ namespace Nop.Plugin.Widgets.PriceForSize.Data
       Property(m => m.DepthAttributeId);
       Property(m => m.MinimumDepthManageable);
       Property(m => m.MaximumDepthManageable);
+
+      Property(m => m.MinimumBillablePerimeter);
+      Property(m => m.MinimumBillableArea);
+      Property(m => m.MinimumBillableVolume);
     }
 
   }
