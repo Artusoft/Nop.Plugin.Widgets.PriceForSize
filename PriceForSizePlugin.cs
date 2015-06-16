@@ -56,9 +56,9 @@ namespace Nop.Plugin.Widgets.PriceForSize
         /// <param name="routeValues">Route values</param>
         public void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
         {
-          actionName = "Configure";
-          controllerName = "WidgetsNivoSlider";
-          routeValues = new RouteValueDictionary { { "Namespaces", "Nop.Plugin.Widgets.NivoSlider.Controllers" }, { "area", null } };
+          actionName = null;
+          controllerName = null;
+          routeValues = null;
         }
 
         /// <summary>
