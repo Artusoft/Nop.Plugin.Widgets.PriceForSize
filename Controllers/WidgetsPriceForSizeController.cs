@@ -1,9 +1,11 @@
 ﻿using Nop.Core;
 using Nop.Core.Data;
+using Nop.Core.Domain.Directory;
 using Nop.Plugin.Widgets.PriceForSize.Data;
 using Nop.Plugin.Widgets.PriceForSize.Domain;
 using Nop.Plugin.Widgets.PriceForSize.Services;
 using Nop.Services.Catalog;
+using Nop.Services.Directory;
 using Nop.Web.Framework.Controllers;
 using System;
 using System.Collections.Generic;
@@ -20,16 +22,19 @@ namespace Nop.Plugin.Widgets.PriceForSize.Controllers
     private readonly IStoreContext _storeContext;
     private readonly IPriceForSizeService _priceForSizeService;
     private readonly IProductAttributeService _productAttributeService;
+		private readonly IMeasureService _measureService;
 
-    public WidgetsPriceForSizeController(
-      IStoreContext storeContext, 
-      IPriceForSizeService priceForSizeService,
-      IProductAttributeService productAttributeService)
-    {
-      _storeContext = storeContext;
-      _priceForSizeService = priceForSizeService;
-      _productAttributeService = productAttributeService;
-    }
+		public WidgetsPriceForSizeController(
+			IStoreContext storeContext,
+			IPriceForSizeService priceForSizeService,
+			IProductAttributeService productAttributeService,
+			IMeasureService measureService)
+		{
+			_storeContext = storeContext;
+			_priceForSizeService = priceForSizeService;
+			_productAttributeService = productAttributeService;
+			_measureService = measureService;
+		}
 
     public new RedirectToRouteResult RedirectToAction(string action, RouteValueDictionary routeValues)
     {
@@ -64,10 +69,20 @@ namespace Nop.Plugin.Widgets.PriceForSize.Controllers
       var mappings = from m in  _productAttributeService.GetProductAttributeMappingsByProductId(id)
                      select m.ProductAttribute;
 
-      ViewData["attributes"] = new SelectList(mappings,"Id", "Name");
+			//var items = from v in Enum.GetValues(typeof(TypeOfPrice)).OfType<TypeOfPrice>()
+			//						select new
+			//						{
+			//							Id = (Int16)v,
+			//							Name = Enum.GetName(typeof(TypeOfPrice), v)
+			//						};
 
+			var dimensions = _measureService.GetAllMeasureDimensions();
 
-      return View("~/Plugins/Widgets.PriceForSize/Views/WidgetsPriceForSize/AdminProduct.cshtml", ps);
+			ViewData["attributes"] = new SelectList(mappings,"Id", "Name");
+		//	ViewData["standardPriceType"] = new SelectList(items, "Id", "Name", (Int16)ps.StandardPriceType);
+			ViewData["measureDimension"] = new SelectList(dimensions, "Id", "Name");
+
+			return View("~/Plugins/Widgets.PriceForSize/Views/WidgetsPriceForSize/AdminProduct.cshtml", ps);
     }
 
     [HttpPost]

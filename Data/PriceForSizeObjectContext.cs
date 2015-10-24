@@ -4,15 +4,39 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Nop.Plugin.Widgets.PriceForSize.Data
 {
-  public class PriceForSizeObjectContext : DbContext, IDbContext
+	//internal sealed class Configuration : System.Data.Entity.Migrations.DbMigrationsConfiguration<PriceForSizeObjectContext>
+	//{
+	//	public Configuration()
+	//	{
+	//		AutomaticMigrationsEnabled = true;
+	//		AutomaticMigrationDataLossAllowed = true;
+			
+	//	}
+	//}
+
+	//internal sealed class MigrationsContextFactory : IDbContextFactory<PriceForSizeObjectContext>
+	//{
+	//	internal static String NameOrConnectionString;
+ //   public PriceForSizeObjectContext Create()
+	//	{
+	//		return new PriceForSizeObjectContext(NameOrConnectionString);
+	//	}
+	//}
+
+	public class PriceForSizeObjectContext : DbContext, IDbContext
   {
-    public PriceForSizeObjectContext(string nameOrConnectionString) : base(nameOrConnectionString) { }
+    public PriceForSizeObjectContext(string nameOrConnectionString) : base(nameOrConnectionString) {
+			//if (String.IsNullOrEmpty(MigrationsContextFactory.NameOrConnectionString))
+			//	MigrationsContextFactory.NameOrConnectionString = nameOrConnectionString;
+   //   System.Data.Entity.Database.SetInitializer(new System.Data.Entity.MigrateDatabaseToLatestVersion<PriceForSizeObjectContext, Configuration>());
+    }
 
     #region Implementation of IDbContext
 
@@ -20,10 +44,13 @@ namespace Nop.Plugin.Widgets.PriceForSize.Data
 
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
-      modelBuilder.Configurations.Add(new Product_PriceForSizeMap());
-      modelBuilder.Configurations.Add(new ProductAttributeValue_PriceForSizeMap());
+			//modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
 
-      base.OnModelCreating(modelBuilder);
+			modelBuilder.Configurations.Add(new Product_PriceForSizeMap());
+      modelBuilder.Configurations.Add(new ProductAttributeValue_PriceForSizeMap());
+			modelBuilder.Configurations.Add(new Nop.Data.Mapping.Directory.MeasureDimensionMap());
+
+			base.OnModelCreating(modelBuilder);
     }
 
     public string CreateDatabaseInstallationScript()

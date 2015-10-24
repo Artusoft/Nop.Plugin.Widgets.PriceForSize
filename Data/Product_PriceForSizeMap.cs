@@ -20,22 +20,30 @@ namespace Nop.Plugin.Widgets.PriceForSize.Data
       Property(m => m.ProductId).IsRequired();
       Property(m => m.HasPriceForSize);
 
-      Property(m => m.WidthAttributeId);
-      Property(m => m.MinimumWidthManageable);
-      Property(m => m.MaximumWidthManageable);
+			Property(m => m.StandardPriceType)
+				.IsOptional();
+			Property(m => m.MeasureDimensionId);
+
+			Property(m => m.WidthAttributeId);
+			Property(m => m.MinimumWidthManageable).HasPrecision(18, 4);
+      Property(m => m.MaximumWidthManageable).HasPrecision(18, 4);
 
       Property(m => m.HeightAttributeId);
-      Property(m => m.MinimumHeightManageable);
-      Property(m => m.MaximumHeightManageable);
+      Property(m => m.MinimumHeightManageable).HasPrecision(18, 4);
+      Property(m => m.MaximumHeightManageable).HasPrecision(18, 4);
 
       Property(m => m.DepthAttributeId);
-      Property(m => m.MinimumDepthManageable);
-      Property(m => m.MaximumDepthManageable);
+      Property(m => m.MinimumDepthManageable).HasPrecision(18, 4);
+      Property(m => m.MaximumDepthManageable).HasPrecision(18, 4);
 
       Property(m => m.MinimumBillablePerimeter);
       Property(m => m.MinimumBillableArea);
       Property(m => m.MinimumBillableVolume);
-    }
+
+			this.HasOptional(p => p.MeasureDimension)
+						 .WithMany()
+						 .HasForeignKey(p => p.MeasureDimensionId);
+		}
 
   }
 }

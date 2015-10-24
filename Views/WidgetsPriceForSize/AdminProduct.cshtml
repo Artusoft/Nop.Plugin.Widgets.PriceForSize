@@ -17,6 +17,20 @@
         @Html.CheckBoxFor(model => model.HasPriceForSize)
       </td>
     </tr>
+		<tr>
+			<td class="adminTitle">
+				@Html.NopLabelFor(model => model.StandardPriceType):
+			</td>
+			<td class="adminData">
+				@Html.EnumDropDownListFor(model => model.StandardPriceType, "None")
+			</td>
+			<td class="adminTitle">
+				@Html.NopLabelFor(model => model.MeasureDimensionId):
+			</td>
+			<td class="adminData">
+				@Html.DropDownListFor(model => model.MeasureDimensionId, ViewData["measureDimension"] as SelectList)
+			</td>
+		</tr>
     <tr>
       <td class="adminTitle">
         @Html.NopLabelFor(model => model.WidthAttributeId):
@@ -28,13 +42,13 @@
         @Html.NopLabelFor(model => model.MinimumWidthManageable):
       </td>
       <td class="adminData">
-        @Html.TextBoxFor(model => model.MinimumWidthManageable)
+        @Html.EditorFor(model => model.MinimumWidthManageable)
       </td>
       <td class="adminTitle">
         @Html.NopLabelFor(model => model.MaximumWidthManageable):
       </td>
       <td class="adminData">
-        @Html.TextBoxFor(model => model.MaximumWidthManageable)
+        @Html.EditorFor(model => model.MaximumWidthManageable)
       </td>
     </tr>
     <tr>
@@ -48,13 +62,13 @@
         @Html.NopLabelFor(model => model.MinimumHeightManageable):
       </td>
       <td class="adminData">
-        @Html.TextBoxFor(model => model.MinimumHeightManageable)
+        @Html.EditorFor(model => model.MinimumHeightManageable)
       </td>
       <td class="adminTitle">
         @Html.NopLabelFor(model => model.MaximumHeightManageable):
       </td>
       <td class="adminData">
-        @Html.TextBoxFor(model => model.MaximumHeightManageable)
+        @Html.EditorFor(model => model.MaximumHeightManageable)
       </td>
     </tr>
     <tr>
@@ -68,13 +82,13 @@
         @Html.NopLabelFor(model => model.MinimumDepthManageable):
       </td>
       <td class="adminData">
-        @Html.TextBoxFor(model => model.MinimumDepthManageable)
+        @Html.EditorFor(model => model.MinimumDepthManageable)
       </td>
       <td class="adminTitle">
         @Html.NopLabelFor(model => model.MaximumDepthManageable):
       </td>
       <td class="adminData">
-        @Html.TextBoxFor(model => model.MaximumDepthManageable)
+        @Html.EditorFor(model => model.MaximumDepthManageable)
       </td>
     </tr>
     <tr>
@@ -82,7 +96,7 @@
         @Html.NopLabelFor(model => model.MinimumBillablePerimeter) (size):
         </td>
       <td class="adminData">
-        @Html.TextBoxFor(model => model.MinimumBillablePerimeter)
+        @Html.EditorFor(model => model.MinimumBillablePerimeter)
         </td>
       <td></td>
       <td></td>
@@ -94,7 +108,7 @@
         @Html.NopLabelFor(model => model.MinimumBillableArea) (size):
       </td>
       <td class="adminData">
-        @Html.TextBoxFor(model => model.MinimumBillableArea)
+        @Html.EditorFor(model => model.MinimumBillableArea)
       </td>
       <td></td>
       <td></td>
@@ -106,7 +120,7 @@
         @Html.NopLabelFor(model => model.MinimumBillableVolume) (size):
       </td>
       <td class="adminData">
-        @Html.TextBoxFor(model => model.MinimumBillableVolume)
+        @Html.EditorFor(model => model.MinimumBillableVolume)
       </td>
       <td></td>
       <td></td>

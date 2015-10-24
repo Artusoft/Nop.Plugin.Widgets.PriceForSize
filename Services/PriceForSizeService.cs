@@ -1,4 +1,5 @@
 ﻿using Nop.Core.Data;
+using Nop.Core.Domain.Directory;
 using Nop.Plugin.Widgets.PriceForSize.Data;
 using Nop.Plugin.Widgets.PriceForSize.Domain;
 using Nop.Services.Catalog;
@@ -15,15 +16,18 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
     private readonly IRepository<Product_PriceForSize> _productRepository;
     private readonly IRepository<ProductAttributeValue_PriceForSize> _productAttributeValueRepository_ps;
     private readonly IProductAttributeService _productAttributeService;
+		private readonly MeasureSettings _measureSettings;
 
-    public PriceForSizeService(IRepository<Product_PriceForSize> productRepository, 
+		public PriceForSizeService(IRepository<Product_PriceForSize> productRepository, 
       IRepository<ProductAttributeValue_PriceForSize> productAttributeValueRepository_ps,
-      IProductAttributeService productAttributeService)
+      IProductAttributeService productAttributeService,
+			MeasureSettings measureSettings)
     {
       _productRepository = productRepository;
       _productAttributeValueRepository_ps = productAttributeValueRepository_ps;
       _productAttributeService = productAttributeService;
-    }
+			_measureSettings = measureSettings;
+		}
 
     public void CreateOrUpdatePriceForSize(Product_PriceForSize ps)
     {
@@ -31,6 +35,9 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
       if (p != null)
       {
         p.HasPriceForSize = ps.HasPriceForSize;
+
+				p.StandardPriceType = ps.StandardPriceType;
+				p.MeasureDimensionId = ps.MeasureDimensionId;
 
         p.WidthAttributeId = ps.WidthAttributeId;
         p.MinimumWidthManageable = ps.MinimumWidthManageable;
@@ -77,11 +84,12 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
       var retVal = (from p in _productRepository.Table
                     where p.ProductId == productId
                     select p).SingleOrDefault();
-      if (retVal == null)
-        retVal = new Product_PriceForSize()
-        {
-          ProductId = productId
-        };
+			if (retVal == null)
+				retVal = new Product_PriceForSize()
+				{
+					ProductId = productId,
+					MeasureDimensionId = _measureSettings.BaseDimensionId
+				};
       return retVal;
     }
 

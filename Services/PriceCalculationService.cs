@@ -1,8 +1,10 @@
 ﻿using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Orders;
 using Nop.Services.Catalog;
+using Nop.Services.Directory;
 using Nop.Services.Discounts;
 using System;
 using System.Collections.Generic;
@@ -14,11 +16,12 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
 {
   public class PriceCalculationService : Nop.Services.Catalog.PriceCalculationService
   {
-    IProductAttributeParser _productAttributeParser;
-    IProductService _productService;
-    IPriceForSizeService _priceForSizeService;
+		private readonly IProductAttributeParser _productAttributeParser;
+		private readonly IProductService _productService;
+		private readonly IPriceForSizeService _priceForSizeService;
+		private readonly IMeasureService _measureService;
 
-    public PriceCalculationService(IWorkContext workContext,
+		public PriceCalculationService(IWorkContext workContext,
             IStoreContext storeContext,
             IDiscountService discountService,
             ICategoryService categoryService,
@@ -27,7 +30,8 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
             ICacheManager cacheManager,
             ShoppingCartSettings shoppingCartSettings,
             CatalogSettings catalogSettings,
-            IPriceForSizeService priceForSizeService)
+            IPriceForSizeService priceForSizeService,
+						IMeasureService measureService)
       : base(
       workContext,
       storeContext,
@@ -43,7 +47,8 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
       _productAttributeParser = productAttributeParser;
       _productService = productService;
       _priceForSizeService = priceForSizeService;
-    }
+			_measureService = measureService;
+		}
 
     public override decimal GetProductCost(Product product, string attributesXml)
     {
@@ -56,25 +61,49 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
 
       if (ps != null && ps.HasPriceForSize)
       {
-        Int32 w = 0;
-        Int32 h = 0;
-        Int32 d = 0;
+        Decimal w = 0;
+				Decimal h = 0;
+				Decimal d = 0;
 
         var mappings = _productAttributeParser.ParseProductAttributeMappings(attributesXml);
 
+
         var bAttr = mappings.SingleOrDefault(m => m.ProductAttributeId == ps.WidthAttributeId);
-        if (bAttr != null)
-          w = _productAttributeParser.ParseValues(attributesXml, bAttr.Id).Select(s => Convert.ToInt32(s)).FirstOrDefault();
+				if (bAttr != null)
+					w = _productAttributeParser.ParseValues(attributesXml, bAttr.Id).Select(s => Convert.ToDecimal(s)).FirstOrDefault();
 
         var hAttr = mappings.SingleOrDefault(m => m.ProductAttributeId == ps.HeightAttributeId);
         if (hAttr != null)
-          h = _productAttributeParser.ParseValues(attributesXml, hAttr.Id).Select(s => Convert.ToInt32(s)).FirstOrDefault();
+          h = _productAttributeParser.ParseValues(attributesXml, hAttr.Id).Select(s => Convert.ToDecimal(s)).FirstOrDefault();
 
         var dAttr = mappings.SingleOrDefault(m => m.ProductAttributeId == ps.DepthAttributeId);
         if (dAttr != null)
-          d = _productAttributeParser.ParseValues(attributesXml, hAttr.Id).Select(s => Convert.ToInt32(s)).FirstOrDefault();
+          d = _productAttributeParser.ParseValues(attributesXml, hAttr.Id).Select(s => Convert.ToDecimal(s)).FirstOrDefault();
 
-        Decimal priceM1 = 0;
+				if (ps.MeasureDimension != null)
+				{
+					w = _measureService.ConvertToPrimaryMeasureDimension(w, ps.MeasureDimension);
+					h = _measureService.ConvertToPrimaryMeasureDimension(h, ps.MeasureDimension);
+					d = _measureService.ConvertToPrimaryMeasureDimension(d, ps.MeasureDimension);
+				}
+
+				if (ps.MinimumWidthManageable.HasValue && w < ps.MinimumWidthManageable)
+					w = ps.MinimumWidthManageable.Value;
+				if (ps.MaximumWidthManageable.HasValue && w > ps.MaximumWidthManageable)
+					w = ps.MaximumWidthManageable.Value;
+
+				if (ps.MinimumHeightManageable.HasValue && h < ps.MinimumHeightManageable)
+					h = ps.MinimumHeightManageable.Value;
+				if (ps.MaximumHeightManageable.HasValue && h > ps.MaximumHeightManageable)
+					h = ps.MaximumHeightManageable.Value;
+
+				if (ps.MinimumDepthManageable.HasValue && d < ps.MinimumDepthManageable)
+					d = ps.MinimumDepthManageable.Value;
+				if (ps.MaximumDepthManageable.HasValue && d > ps.MaximumDepthManageable)
+					d = ps.MaximumDepthManageable.Value;
+
+
+				Decimal priceM1 = 0;
         Decimal priceM2 = 0;
         Decimal priceM3 = 0;
         Decimal priceBase = 0;
@@ -107,9 +136,9 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
             }
           }
 
-        var per = Convert.ToDecimal(w + h) * 2 / 100;
-        var area = Convert.ToDecimal(w) / 100 * Convert.ToDecimal(h) / 100;
-        var vol = Convert.ToDecimal(w) / 100 * Convert.ToDecimal(h) / 100 * Convert.ToDecimal(d) / 100;
+        var per = (w + h) * 2;
+        var area = w * h;
+				var vol = w * h * d;
 
         if (ps.MinimumBillablePerimeter.HasValue && per < ps.MinimumBillablePerimeter.Value)
           per = ps.MinimumBillablePerimeter.Value;
@@ -120,7 +149,25 @@ namespace Nop.Plugin.Widgets.PriceForSize.Services
         if (ps.MinimumBillableVolume.HasValue && vol < ps.MinimumBillableVolume.Value)
           vol = ps.MinimumBillableVolume.Value;
 
-        return base.GetUnitPrice(product, customer, shoppingCartType, quantity, attributesXml, customerEnteredPrice, rentalStartDate, rentalEndDate, includeDiscounts, out  discountAmount, out appliedDiscount) +
+				var standardPrice = base.GetUnitPrice(product, customer, shoppingCartType, quantity, attributesXml, customerEnteredPrice, rentalStartDate, rentalEndDate, includeDiscounts, out discountAmount, out appliedDiscount);
+
+				switch (ps.StandardPriceType)
+				{
+					case Domain.TypeOfPrice.Perimeter:
+						standardPrice = standardPrice * per;
+            break;
+
+					case Domain.TypeOfPrice.Area:
+						standardPrice = standardPrice * area;
+						break;
+
+					case Domain.TypeOfPrice.Volume:
+						standardPrice = standardPrice * vol;
+						break;
+				}
+
+
+				return standardPrice +
           per * priceM1 +
           area * priceM2 +
           vol * priceM3 +

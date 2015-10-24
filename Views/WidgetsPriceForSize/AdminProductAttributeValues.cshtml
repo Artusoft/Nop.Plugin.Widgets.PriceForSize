@@ -23,27 +23,27 @@
       @Html.Hidden("prices[" + @i + "].ProductAttributeValueId", Model[i].ProductAttributeValueId, new { @readonly = "readonly" })
       <tr>
         <td class="adminData">
-          @Html.Label("prices[" + @i + "].AttributeName", Model[i].AttributeName, new { @readonly = "readonly" })
+          @Html.Label("prices[" + @i + "].AttributeName", Model[i].AttributeName, new { @readonly = "readonly"})
         </td>
         <td class="adminData">
           @Html.Label("prices[" + @i + "].ValueName", Model[i].ValueName, new { @readonly = "readonly" })
         </td>
-        <td class="adminData">
+        <td class="adminData attributePrice">
           @Html.TextBox("prices[" + @i + "].PriceForM1", Model[i].PriceForM1)
         </td>
-        <td class="adminData">
+        <td class="adminData attributePrice">
           @Html.TextBox("prices[" + @i + "].PriceForM2", Model[i].PriceForM2)
         </td>
-        <td class="adminData">
+        <td class="adminData attributePrice">
           @Html.TextBox("prices[" + @i + "].PriceForM3", Model[i].PriceForM3)
         </td>
-        <td class="adminData">
+        <td class="adminData attributePrice">
           @Html.TextBox("prices[" + @i + "].PriceForBaseLength", Model[i].PriceForBaseLength)
         </td>
-        <td class="adminData">
+        <td class="adminData attributePrice">
           @Html.TextBox("prices[" + @i + "].PriceForHeightLength", Model[i].PriceForHeightLength)
         </td>
-        <td class="adminData">
+        <td class="adminData attributePrice">
           @Html.TextBox("prices[" + @i + "].PriceForDepthLength", Model[i].PriceForDepthLength)
         </td>
       </tr>
@@ -79,5 +79,11 @@
           }
         });
       });
+
+      $(".attributePrice input[type='text']").kendoNumericTextBox({
+            format: "#.00",
+            decimals: 2 
+        });
     });
+
 </script>
