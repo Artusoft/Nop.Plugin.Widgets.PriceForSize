@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +31,11 @@ namespace Nop.Plugin.Widgets.PriceForSize.Data
 
 	public class PriceForSizeObjectContext : DbContext, IDbContext
   {
-    public PriceForSizeObjectContext(string nameOrConnectionString) : base(nameOrConnectionString) {
+		public bool ProxyCreationEnabled { get; set; }
+
+		public bool AutoDetectChangesEnabled { get; set; }
+	
+		public PriceForSizeObjectContext(string nameOrConnectionString) : base(nameOrConnectionString) {
 			//if (String.IsNullOrEmpty(MigrationsContextFactory.NameOrConnectionString))
 			//	MigrationsContextFactory.NameOrConnectionString = nameOrConnectionString;
    //   System.Data.Entity.Database.SetInitializer(new System.Data.Entity.MigrateDatabaseToLatestVersion<PriceForSizeObjectContext, Configuration>());
@@ -93,6 +96,11 @@ namespace Nop.Plugin.Widgets.PriceForSize.Data
     {
       throw new System.NotImplementedException();
     }
-  }
+
+		public void Detach(object entity)
+		{
+			throw new NotImplementedException();
+		}
+	}
 
 }

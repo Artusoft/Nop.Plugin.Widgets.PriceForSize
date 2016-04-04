@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Nop.Web.Framework.Mvc;
 using Nop.Services.Catalog;
+using Nop.Core.Configuration;
 
 namespace Nop.Plugin.Widgets.PriceForSize
 {
@@ -22,7 +23,7 @@ namespace Nop.Plugin.Widgets.PriceForSize
   {
     private const string CONTEXT_NAME = "nop_object_context_product_price_for_size";
 
-    public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder)
+    public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig config)
     {
       builder.RegisterType<PriceForSizeService>().As<IPriceForSizeService>().InstancePerLifetimeScope();
 
@@ -45,7 +46,7 @@ namespace Nop.Plugin.Widgets.PriceForSize
      // builder.RegisterType<Nop.Plugin.Widgets.PriceForSize.ActionFilters.ProductActionFilter>().As<System.Web.Mvc.IFilterProvider>();
     }
 
-    public int Order
+		public int Order
     {
       get { return 1; }
     }
