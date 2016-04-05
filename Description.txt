@@ -1,7 +1,7 @@
 ﻿Group: Widgets
 FriendlyName: Price for size
 SystemName: Widgets.PriceForSize
-Version: 1.1
+Version: 1.2
 SupportedVersions: 3.70
 Author: Artusoft
 DisplayOrder: 1
